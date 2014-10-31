@@ -1,0 +1,28 @@
+PODS:
+  - AsyncDisplayKit (1.0.1):
+    - AsyncDisplayKit/ASDealloc2MainObject
+  - AsyncDisplayKit/ASDealloc2MainObject (1.0.1)
+  - CocoaLumberjack (2.0.0-beta3):
+    - CocoaLumberjack/Default
+    - CocoaLumberjack/Extensions
+  - CocoaLumberjack/Core (2.0.0-beta3)
+  - CocoaLumberjack/Default (2.0.0-beta3):
+    - CocoaLumberjack/Core
+  - CocoaLumberjack/Extensions (2.0.0-beta3):
+    - CocoaLumberjack/Default
+  - MKNetworkKit (0.87):
+    - Reachability (~> 3.1.0)
+  - Reachability (3.1.1)
+
+DEPENDENCIES:
+  - AsyncDisplayKit
+  - CocoaLumberjack
+  - MKNetworkKit
+
+SPEC CHECKSUMS:
+  AsyncDisplayKit: 1bbf78b78795370cc191b15ad7755683c32cc927
+  CocoaLumberjack: 55c22a2b8bde7a29c568ab4015b5874216524d70
+  MKNetworkKit: 83e6296a8d42e98a71880424a889773654846d74
+  Reachability: 8e9635e3cb4f98e7f825e51147f677ecc694d0e7
+
+COCOAPODS: 0.34.4

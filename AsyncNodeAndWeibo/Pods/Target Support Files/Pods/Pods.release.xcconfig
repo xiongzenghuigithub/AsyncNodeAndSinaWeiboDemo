@@ -1,0 +1,8 @@
+CLANG_CXX_LANGUAGE_STANDARD = c++11
+CLANG_CXX_LIBRARY = libc++
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AsyncDisplayKit" "${PODS_ROOT}/Headers/Public/CocoaLumberjack" "${PODS_ROOT}/Headers/Public/MKNetworkKit" "${PODS_ROOT}/Headers/Public/MKNetworkKit/Categories" "${PODS_ROOT}/Headers/Public/Reachability"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/AsyncDisplayKit" -isystem "${PODS_ROOT}/Headers/Public/CocoaLumberjack" -isystem "${PODS_ROOT}/Headers/Public/MKNetworkKit" -isystem "${PODS_ROOT}/Headers/Public/MKNetworkKit/Categories" -isystem "${PODS_ROOT}/Headers/Public/Reachability"
+OTHER_LDFLAGS = -ObjC -l"Pods-AsyncDisplayKit" -l"Pods-CocoaLumberjack" -l"Pods-MKNetworkKit" -l"Pods-Reachability" -l"c++" -framework "CFNetwork" -framework "Security" -framework "SystemConfiguration"
+OTHER_LIBTOOLFLAGS = $(OTHER_LDFLAGS)
+PODS_ROOT = ${SRCROOT}/Pods
