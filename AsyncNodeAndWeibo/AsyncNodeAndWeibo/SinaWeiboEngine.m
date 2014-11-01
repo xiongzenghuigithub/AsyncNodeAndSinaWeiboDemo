@@ -4,7 +4,10 @@
 
 //要使用SSL连接
 #define kHostName                       @"api.weibo.com"
-#define kXXX                            @"2/statuses/queryid"
+#define kLatestWeiboListPath            @"2/statuses/public_timeline.json"
+#define kgetWeiboPath                   @"2/comments/show.json"
+#define kgetUserInfoPath                @"2/users/show.json"
+#define kReplyMessagePath               @"2/messages/reply.json"
 
 #define kMaxQueeuSize                   10
 
@@ -89,10 +92,25 @@ static SinaWeiboEngine * engine = nil;
         webpage.objectID = [content objectForKey:@"objectID"];
         webpage.title = [content objectForKey:@"title"];
         webpage.description = [content objectForKey:@""];
-        webpage.thumbnailData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"image_2" ofType:@"jpg"]];
+        
+        NSURL * imageURL = [content objectForKey:@"thumbnailDataURL"];
+        NSURLRequest * req = [NSURLRequest requestWithURL:imageURL];
+        [NSURLConnection sendAsynchronousRequest:req queue:[self getOperationQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+            
+            webpage.thumbnailData = data;
+        }];
+        
         webpage.webpageUrl = [content objectForKey:@""];
         message.mediaObject = webpage;
-
+    }
+    
+    WBProvideMessageForWeiboResponse *response = [WBProvideMessageForWeiboResponse responseWithMessage:message];
+    
+    if ([WeiboSDK sendResponse:response])
+    {
+        if (complet != nil) {
+            complet();//[调用该方法的控制器对象 dismissModalViewControllerAnimated:YES];
+        }
     }
 }
 
@@ -128,7 +146,7 @@ static SinaWeiboEngine * engine = nil;
     
     if ([response isKindOfClass:WBSendMessageToWeiboResponse.class])
     {
-        //发送消息回调
+#pragma mark - 发送消息回调
  
         int statusCode = response.statusCode;
         _userInfo = response.userInfo;
@@ -136,14 +154,137 @@ static SinaWeiboEngine * engine = nil;
     }
     else if ([response isKindOfClass:WBAuthorizeResponse.class])
     {
-        //SSO授权回调
+#pragma mark - SSO授权回调
         
         int statusCode = response.statusCode;
         _userID = [(WBAuthorizeResponse *)response userID];
         _weiboToken = [(WBAuthorizeResponse *)response accessToken];
         _userInfo = [(WBAuthorizeResponse *)response userInfo];
         _requestUserInfo = [(WBAuthorizeResponse *)response requestUserInfo];
+        _expirationDate = [(WBAuthorizeResponse *)response expirationDate];
     }
+}
+
+#pragma mark - Sina SDK 封装函数
+- (void)getUserInfoWithCompletion:(void (^)(UserInfo * info))complet {
+    
+    NSDictionary * paramDict = @{
+                                 @"source":kWeiboKey,
+                                 @"access_token":[[SinaWeiboEngine sharedSinaWeiboEngine] weiboToken],
+                                 @"uid":[[SinaWeiboEngine sharedSinaWeiboEngine] userID]
+                                 };
+    
+    MKNetworkOperation * op = [[SinaWeiboEngine sharedSinaWeiboEngine] operationWithPath:kgetUserInfoPath params:paramDict httpMethod:@"GET" ssl:YES];
+    [op setFreezable:YES];
+    [op addCompletionHandler:^(MKNetworkOperation *completedOperation) {
+        NSDictionary * jsonDict = [completedOperation responseJSON];
+        DDLogInfo(@"jsonDict = %@", jsonDict);
+    } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
+        DDLogError(@"获取路径 %@ 失败: %@", kgetUserInfoPath, [error localizedDescription]);
+    }];
+    
+    [[SinaWeiboEngine sharedSinaWeiboEngine] enqueueOperation:op];
+}
+
+- (void)getLatestWeiboWithComplet:(void (^)(NSArray * weiboList))complet {
+    
+    NSDictionary * paramDict = @{
+                                 @"source":kWeiboKey,
+                                 @"access_token":[[SinaWeiboEngine sharedSinaWeiboEngine] weiboToken],
+                                 @"count":@"20"
+                                 };
+    
+    MKNetworkOperation * op = [[SinaWeiboEngine sharedSinaWeiboEngine] operationWithPath:kLatestWeiboListPath params:paramDict httpMethod:@"GET" ssl:YES];
+    
+    [op setFreezable:YES];
+    
+    [op addCompletionHandler:^(MKNetworkOperation *completedOperation) {
+        
+        NSDictionary * jsonDict = [completedOperation responseJSON];
+//        NSData * data = [completedOperation responseData];
+//        UIImage * image = [completedOperation responseImage];
+//        NSString * string = [completedOperation responseString];
+        
+        if ([completedOperation isCachedResponse]) {
+            DDLogInfo(@"该请求的response数据已经缓存");
+        }else{
+            DDLogInfo(@"获取到新的数据: 最近的微博数");
+            DDLogVerbose(@"responseJSON = %@", jsonDict);
+        }
+        
+    } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
+        DDLogError(@"获取路径 = %@ 数据失败, error = %@", kLatestWeiboListPath, [error localizedDescription]);
+    }];
+    
+    [[SinaWeiboEngine sharedSinaWeiboEngine] enqueueOperation:op];
+    
+}
+
+- (void)getWeiboWithID:(NSString *)wbId Completion:(void (^)(Status * wb))complet {
+    
+    NSDictionary * paramDict = @{
+                            @"source":kWeiboKey,
+                            @"access_token":[[SinaWeiboEngine sharedSinaWeiboEngine] weiboToken],
+                            @"id":wbId,
+                                 };
+    
+    MKNetworkOperation * op = [[SinaWeiboEngine sharedSinaWeiboEngine] operationWithPath:kgetWeiboPath params:paramDict httpMethod:@"GET" ssl:YES];
+    
+    [op setFreezable:YES];
+    
+    [op addCompletionHandler:^(MKNetworkOperation *completedOperation) {
+        
+        NSDictionary * jsonDict = [completedOperation responseJSON];
+        
+        if ([completedOperation isCachedResponse]) {
+            DDLogInfo(@"该请求的response数据已经缓存");
+        }else{
+            DDLogInfo(@"获取到新的数据: 最近的微博数");
+            DDLogVerbose(@"responseJSON = %@", jsonDict);
+        }
+        
+    } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
+        DDLogError(@"获取路径 = %@ 数据失败, error = %@", kgetWeiboPath, [error localizedDescription]);
+    }];
+    
+    [[SinaWeiboEngine sharedSinaWeiboEngine] enqueueOperation:op];
+}
+
+- (void)replyMessageWithReceiverId:(NSString *)rid Data:(NSString *)data ReplyKind:(NSString *)kind Completion:(void (^)())complet {
+    
+    NSDictionary * paramDict = @{
+                                 @"source":kWeiboKey,
+                                 @"access_token":[[SinaWeiboEngine sharedSinaWeiboEngine] weiboToken],
+                                 @"type":kind,
+                                 @"data":[data stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                                 @"receiver_id":rid,
+                                 };
+    
+    MKNetworkOperation * op = [[SinaWeiboEngine sharedSinaWeiboEngine] operationWithPath:kReplyMessagePath params:paramDict httpMethod:@"POST" ssl:YES];
+    
+    [op setFreezable:YES];
+    [op addCompletionHandler:^(MKNetworkOperation *completedOperation) {
+        
+    } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
+        
+    }];
+    [[SinaWeiboEngine sharedSinaWeiboEngine] enqueueOperation:op];
+}
+
+#pragma mark - 异步获取网络图片NSData
+- (void)getNetworkImage:(NSString *)url
+             Completion:(void (^)(NSData * imageData))complet {
+    
+    //1. MKnetworkKitEngine 的 operationWithPath:params:httpMethod:ssl: => 在新开的线程执行网络请求
+    MKNetworkOperation * op = [[SinaWeiboEngine sharedSinaWeiboEngine] operationWithPath:url params:nil httpMethod:@"GET" ssl:NO];
+    
+    [op setFreezable:YES];
+    
+    [op addCompletionHandler:^(MKNetworkOperation *completedOperation) {
+        complet([completedOperation responseData]);
+    } errorHandler:^(MKNetworkOperation *completedOperation, NSError *error) {
+        DDLogError(@"访问 %@ 网络图片失败: %@", url, [error localizedDescription]);
+    }];
 }
 
 #pragma mark - dealloc
@@ -152,6 +293,7 @@ static SinaWeiboEngine * engine = nil;
     _weiboToken = nil;
     _userInfo = nil;
     _requestUserInfo = nil;
+    _expirationDate = nil;
     _operationQueue = nil;
 }
 

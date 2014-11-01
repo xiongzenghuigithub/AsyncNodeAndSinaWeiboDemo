@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2104A31D1A0491D10089072D /* Status.m in Sources */ = {isa = PBXBuildFile; fileRef = 2104A31C1A0491D10089072D /* Status.m */; };
+		2104A3201A05154A0089072D /* UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2104A31F1A05154A0089072D /* UserInfo.m */; };
 		9433204C1A03412B001D29A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9433204B1A03412A001D29A8 /* Foundation.framework */; };
 		9433204E1A03412B001D29A8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9433204D1A03412B001D29A8 /* CoreGraphics.framework */; };
 		943320501A03412B001D29A8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9433204F1A03412B001D29A8 /* UIKit.framework */; };
@@ -38,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2104A31B1A0491D10089072D /* Status.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Status.h; sourceTree = "<group>"; };
+		2104A31C1A0491D10089072D /* Status.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Status.m; sourceTree = "<group>"; };
+		2104A31E1A05154A0089072D /* UserInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfo.h; sourceTree = "<group>"; };
+		2104A31F1A05154A0089072D /* UserInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfo.m; sourceTree = "<group>"; };
 		466958D8ECD0F424F553F8F4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		943320481A03412A001D29A8 /* AsyncNodeAndWeibo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AsyncNodeAndWeibo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9433204B1A03412A001D29A8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -148,6 +154,10 @@
 				943320521A03412B001D29A8 /* Supporting Files */,
 				943320811A034236001D29A8 /* Config.h */,
 				943320861A0345EF001D29A8 /* libWeiboSDK */,
+				2104A31B1A0491D10089072D /* Status.h */,
+				2104A31C1A0491D10089072D /* Status.m */,
+				2104A31E1A05154A0089072D /* UserInfo.h */,
+				2104A31F1A05154A0089072D /* UserInfo.m */,
 			);
 			path = AsyncNodeAndWeibo;
 			sourceTree = "<group>";
@@ -336,6 +346,8 @@
 				943320621A03412B001D29A8 /* ViewController.m in Sources */,
 				9433205C1A03412B001D29A8 /* AppDelegate.m in Sources */,
 				943320581A03412B001D29A8 /* main.m in Sources */,
+				2104A31D1A0491D10089072D /* Status.m in Sources */,
+				2104A3201A05154A0089072D /* UserInfo.m in Sources */,
 				943320951A037148001D29A8 /* SinaWeiboEngine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
