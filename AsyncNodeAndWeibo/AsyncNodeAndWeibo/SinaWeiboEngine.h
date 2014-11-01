@@ -1,8 +1,19 @@
 
+/** 
+    sina 微博 SDK 配置:
+ 
+        1. 账号: teen2008@163.com/teen532800
+        2. 开发平台的应用的Boundle Id == xcode工程的 Boundle Identifier
+        3. 流程
+            > 登录获取用户的AccessToken、userID
+            > 以后所有的请求时，提交需要的参数，同时提交AccessToken+app key
+ */
+
 
 #import "MKNetworkEngine.h"
 #import "Status.h"
 #include "UserInfo.h"
+
 
 typedef enum ShareKind{
     Text = 0,
